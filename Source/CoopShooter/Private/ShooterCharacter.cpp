@@ -60,6 +60,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Pressed, this, &AShooterCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AShooterCharacter::EndCrouch);
+
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AShooterCharacter::Fire);
 }
 
 void AShooterCharacter::MoveForward(float AxisValue)
@@ -80,4 +82,19 @@ void AShooterCharacter::BeginCrouch()
 void AShooterCharacter::EndCrouch()
 {
 	UnCrouch();
+}
+
+void AShooterCharacter::Fire()
+{
+	Weapon->Fire();
+}
+
+FVector AShooterCharacter::GetPawnViewLocation() const
+{
+	if (CameraComp)
+	{
+		return CameraComp->GetComponentLocation();
+	}
+
+	return Super::GetPawnViewLocation();
 }
