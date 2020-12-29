@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Actors/Weapon.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -27,6 +28,14 @@ void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	SetupWeapon();
+}
+
+void AShooterCharacter::SetupWeapon()
+{
+	Weapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass);
+	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("weapon_socket"));
+	Weapon->SetOwner(this);
 }
 
 // Called every frame

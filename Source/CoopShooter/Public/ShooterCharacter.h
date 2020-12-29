@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "ShooterCharacter.generated.h"
 
+class AWeapon;
+
 UCLASS()
 class COOPSHOOTER_API AShooterCharacter : public ACharacter
 {
@@ -26,6 +28,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	void SetupWeapon();
+
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void BeginCrouch();
@@ -37,4 +41,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class USpringArmComponent* SpringArmComp;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AWeapon> WeaponClass;
+
+	UPROPERTY()
+	AWeapon* Weapon;
 };
