@@ -12,6 +12,7 @@ AWeapon::AWeapon()
 	MuzzleSocketName = TEXT("MuzzleFlashSocket");
 	TracerTargetName = TEXT("TracerEnd");
 
+	Damage = 20.0f;
 }
 
 void AWeapon::Fire()
@@ -40,7 +41,7 @@ void AWeapon::Fire()
 
 			if (ImpactEffect)
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
-			
+
 			UGameplayStatics::ApplyPointDamage(HitActor, 20.0f, ShotDirection, Hit, MyOwner->GetInstigatorController(), this, DamageType);
 
 			TraceEndPoint = Hit.ImpactPoint;

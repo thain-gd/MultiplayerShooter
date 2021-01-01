@@ -16,8 +16,12 @@ public:
 	// Sets default values for this actor's properties
 	AWeapon();
 
+	virtual void Fire();
 
-	void Fire();
+	const TSubclassOf<UDamageType> GetDamageType() const { return DamageType; }
+	UParticleSystem* GetImpactEffect() const { return ImpactEffect; }
+	float GetDamage() const { return Damage; }
+
 private:
 	void PlayFireEffects(FVector TraceEnd);
 
@@ -43,4 +47,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	UParticleSystem* TracerEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	float Damage;
 };
