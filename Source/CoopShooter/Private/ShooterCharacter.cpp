@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "ShooterCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -21,6 +18,9 @@ AShooterCharacter::AShooterCharacter()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	AimingFOV = 65.0f;
+	AimInterpSpeed = 20.0f;
 }
 
 // Called when the game starts or when spawned
@@ -28,6 +28,8 @@ void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	DefaultFOV = CameraComp->FieldOfView;
+
 	SetupWeapon();
 }
 
@@ -43,6 +45,14 @@ void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	UpdateCameraFOV(DeltaTime);
+}
+
+void AShooterCharacter::UpdateCameraFOV(float DeltaTime)
+{
+	float TargetFOV = bIsAiming ? AimingFOV : DefaultFOV;
+	float NewFOV = FMath::FInterpTo(CameraComp->FieldOfView, TargetFOV, DeltaTime, AimInterpSpeed);
+	CameraComp->SetFieldOfView(NewFOV);
 }
 
 // Called to bind functionality to input
@@ -62,6 +72,9 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AShooterCharacter::EndCrouch);
 
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AShooterCharacter::Fire);
+
+	PlayerInputComponent->BindAction(TEXT("Aim"), IE_Pressed, this, &AShooterCharacter::BeginAim);
+	PlayerInputComponent->BindAction(TEXT("Aim"), IE_Released, this, &AShooterCharacter::EndAim);
 }
 
 void AShooterCharacter::MoveForward(float AxisValue)
@@ -87,6 +100,16 @@ void AShooterCharacter::EndCrouch()
 void AShooterCharacter::Fire()
 {
 	Weapon->Fire();
+}
+
+void AShooterCharacter::BeginAim()
+{
+	bIsAiming = true;
+}
+
+void AShooterCharacter::EndAim()
+{
+	bIsAiming = false;
 }
 
 FVector AShooterCharacter::GetPawnViewLocation() const

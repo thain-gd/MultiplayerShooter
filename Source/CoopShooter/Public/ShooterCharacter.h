@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -32,11 +30,16 @@ protected:
 private:
 	void SetupWeapon();
 
+	void UpdateCameraFOV(float DeltaTime);
+
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void BeginCrouch();
 	void EndCrouch();
 	void Fire();
+	void BeginAim();
+	void EndAim();
+
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -50,4 +53,13 @@ protected:
 
 	UPROPERTY()
 	AWeapon* Weapon;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+	float AimingFOV;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
+	float AimInterpSpeed;
+
+	bool bIsAiming;
+	float DefaultFOV;
 };
