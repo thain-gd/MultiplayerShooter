@@ -3,6 +3,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "Actors/Weapon.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -14,7 +15,13 @@ AShooterCharacter::AShooterCharacter()
 	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->SetupAttachment(RootComponent);
 
-	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+	CharacterMovementComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
+	if (CharacterMovementComp)
+	{
+		CharacterMovementComp->GetNavAgentPropertiesRef().bCanCrouch = true;
+		DefaultMovingSpeed = CharacterMovementComp->MaxWalkSpeed;
+		AimingMovingSpeed = DefaultMovingSpeed * 0.35f;
+	}
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
@@ -29,15 +36,19 @@ void AShooterCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	DefaultFOV = CameraComp->FieldOfView;
+	WeaponAttachSocketName = TEXT("weapon_socket");
 
 	SetupWeapon();
 }
 
 void AShooterCharacter::SetupWeapon()
 {
-	Weapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass);
-	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("weapon_socket"));
-	Weapon->SetOwner(this);
+	CurrentWeapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass);
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponAttachSocketName);
+		CurrentWeapon->SetOwner(this);
+	}
 }
 
 // Called every frame
@@ -99,17 +110,22 @@ void AShooterCharacter::EndCrouch()
 
 void AShooterCharacter::Fire()
 {
-	Weapon->Fire();
+	if (CurrentWeapon)
+		CurrentWeapon->Fire();
 }
 
 void AShooterCharacter::BeginAim()
 {
 	bIsAiming = true;
+	if (CharacterMovementComp)
+		CharacterMovementComp->MaxWalkSpeed = AimingMovingSpeed;
 }
 
 void AShooterCharacter::EndAim()
 {
 	bIsAiming = false;
+	if (CharacterMovementComp)
+		CharacterMovementComp->MaxWalkSpeed = DefaultMovingSpeed;
 }
 
 FVector AShooterCharacter::GetPawnViewLocation() const

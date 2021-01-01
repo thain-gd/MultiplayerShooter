@@ -48,11 +48,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class USpringArmComponent* SpringArmComp;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly, Category = "Weapon")
+	FName WeaponAttachSocketName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<AWeapon> WeaponClass;
 
 	UPROPERTY()
-	AWeapon* Weapon;
+	AWeapon* CurrentWeapon;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	float AimingFOV;
@@ -62,4 +65,9 @@ protected:
 
 	bool bIsAiming;
 	float DefaultFOV;
+
+	float DefaultMovingSpeed;
+	float AimingMovingSpeed;
+
+	class UCharacterMovementComponent* CharacterMovementComp;
 };
