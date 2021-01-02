@@ -28,7 +28,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	void SetupWeapon();
+	void SetupWeapons();
 
 	void UpdateCameraFOV(float DeltaTime);
 
@@ -39,6 +39,9 @@ private:
 	void Fire();
 	void BeginAim();
 	void EndAim();
+	void SwitchWeaponUp();
+	void SwitchWeaponDown();
+	void SwitchWeapon(uint32 NextWeaponIndex);
 
 
 protected:
@@ -52,10 +55,12 @@ protected:
 	FName WeaponAttachSocketName;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	TSubclassOf<AWeapon> WeaponClass;
+	TArray<TSubclassOf<AWeapon>> WeaponClasses;
 
 	UPROPERTY()
-	AWeapon* CurrentWeapon;
+	TArray<AWeapon*> AvailableWeapons;
+
+	uint32 CurrentWeaponIndex = 0;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	float AimingFOV;

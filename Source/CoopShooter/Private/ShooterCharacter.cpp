@@ -38,16 +38,29 @@ void AShooterCharacter::BeginPlay()
 	DefaultFOV = CameraComp->FieldOfView;
 	WeaponAttachSocketName = TEXT("weapon_socket");
 
-	SetupWeapon();
+	SetupWeapons();
 }
 
-void AShooterCharacter::SetupWeapon()
+void AShooterCharacter::SetupWeapons()
 {
-	CurrentWeapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass);
-	if (CurrentWeapon)
+	int i = 0;
+	for (TSubclassOf<AWeapon> WeaponClass : WeaponClasses)
 	{
-		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponAttachSocketName);
-		CurrentWeapon->SetOwner(this);
+		if (WeaponClass)
+		{
+			AWeapon* Weapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass);
+			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, WeaponAttachSocketName);
+			Weapon->SetOwner(this);
+
+			if (i != CurrentWeaponIndex)
+			{
+				Weapon->SetActorHiddenInGame(true);
+			}
+
+			AvailableWeapons.Add(Weapon);
+		}
+
+		++i;
 	}
 }
 
@@ -86,6 +99,9 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction(TEXT("Aim"), IE_Pressed, this, &AShooterCharacter::BeginAim);
 	PlayerInputComponent->BindAction(TEXT("Aim"), IE_Released, this, &AShooterCharacter::EndAim);
+
+	PlayerInputComponent->BindAction(TEXT("SwitchWeaponUp"), IE_Pressed, this, &AShooterCharacter::SwitchWeaponUp);
+	PlayerInputComponent->BindAction(TEXT("SwitchWeaponDown"), IE_Pressed, this, &AShooterCharacter::SwitchWeaponDown);
 }
 
 void AShooterCharacter::MoveForward(float AxisValue)
@@ -110,8 +126,7 @@ void AShooterCharacter::EndCrouch()
 
 void AShooterCharacter::Fire()
 {
-	if (CurrentWeapon)
-		CurrentWeapon->Fire();
+	AvailableWeapons[CurrentWeaponIndex]->Fire();
 }
 
 void AShooterCharacter::BeginAim()
@@ -126,6 +141,23 @@ void AShooterCharacter::EndAim()
 	bIsAiming = false;
 	if (CharacterMovementComp)
 		CharacterMovementComp->MaxWalkSpeed = DefaultMovingSpeed;
+}
+
+void AShooterCharacter::SwitchWeaponUp()
+{
+	SwitchWeapon((CurrentWeaponIndex - 1 + AvailableWeapons.Num()) % AvailableWeapons.Num());
+}
+
+void AShooterCharacter::SwitchWeaponDown()
+{
+	SwitchWeapon((CurrentWeaponIndex + 1) % AvailableWeapons.Num());
+}
+
+void AShooterCharacter::SwitchWeapon(uint32 NextWeaponIndex)
+{
+	AvailableWeapons[CurrentWeaponIndex]->SetActorHiddenInGame(true);
+	AvailableWeapons[NextWeaponIndex]->SetActorHiddenInGame(false);
+	CurrentWeaponIndex = NextWeaponIndex;
 }
 
 FVector AShooterCharacter::GetPawnViewLocation() const

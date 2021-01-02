@@ -35,7 +35,7 @@ void AWeapon::Fire()
 		FVector TraceEndPoint = TraceEnd;
 
 		FHitResult Hit;
-		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, ECC_Visibility, QueryParams))
+		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, ECC_GameTraceChannel1, QueryParams))
 		{
 			AActor* HitActor = Hit.GetActor();
 
