@@ -95,7 +95,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Pressed, this, &AShooterCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction(TEXT("Crouch"), IE_Released, this, &AShooterCharacter::EndCrouch);
 
-	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AShooterCharacter::Fire);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AShooterCharacter::StartFire);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Released, this, &AShooterCharacter::StopFire);
 
 	PlayerInputComponent->BindAction(TEXT("Aim"), IE_Pressed, this, &AShooterCharacter::BeginAim);
 	PlayerInputComponent->BindAction(TEXT("Aim"), IE_Released, this, &AShooterCharacter::EndAim);
@@ -124,9 +125,16 @@ void AShooterCharacter::EndCrouch()
 	UnCrouch();
 }
 
-void AShooterCharacter::Fire()
+void AShooterCharacter::StartFire()
 {
-	AvailableWeapons[CurrentWeaponIndex]->Fire();
+	if (AvailableWeapons.Num() - 1 >= CurrentWeaponIndex)
+		AvailableWeapons[CurrentWeaponIndex]->StartFire();
+}
+
+void AShooterCharacter::StopFire()
+{
+	if (AvailableWeapons.Num() - 1 >= CurrentWeaponIndex)
+		AvailableWeapons[CurrentWeaponIndex]->StopFire();
 }
 
 void AShooterCharacter::BeginAim()

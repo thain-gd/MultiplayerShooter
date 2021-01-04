@@ -36,7 +36,8 @@ private:
 	void MoveRight(float AxisValue);
 	void BeginCrouch();
 	void EndCrouch();
-	void Fire();
+	void StartFire();
+	void StopFire();
 	void BeginAim();
 	void EndAim();
 	void SwitchWeaponUp();
@@ -60,7 +61,7 @@ protected:
 	UPROPERTY()
 	TArray<AWeapon*> AvailableWeapons;
 
-	uint32 CurrentWeaponIndex = 0;
+	int32 CurrentWeaponIndex = 0;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	float AimingFOV;

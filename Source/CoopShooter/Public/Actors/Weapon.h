@@ -16,17 +16,20 @@ public:
 	// Sets default values for this actor's properties
 	AWeapon();
 
-	virtual void Fire();
+	void StartFire();
+	void StopFire();
 
 	const TSubclassOf<UDamageType> GetDamageType() const { return DamageType; }
-	UParticleSystem* GetImpactEffect() const { return DefaultImpactEffect; }
+	UParticleSystem* GetDefaultImpactEffect() const { return DefaultImpactEffect; }
 	float GetDamage() const { return BaseDamage; }
 
 protected:
 	void RunCameraShake();
 
 private:
-	void PlayFireEffects(FVector TraceEnd);
+	void Fire();
+	virtual void OnFireHandle(AActor* MyOwner);
+	void PlayFireEffects();
 
 
 protected:
@@ -54,12 +57,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	UParticleSystem* TracerEffect;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	bool bIsSingleTap;
+
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	float BaseDamage;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	float HeadshotMultiplier = 1.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	float FireRate;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<UCameraShake> FireCamShake;
+
+	FVector TraceEndPoint;
+	FTimerHandle TimeBetweenShotsTimerHandle;
+	float LastTimeFire;
 };

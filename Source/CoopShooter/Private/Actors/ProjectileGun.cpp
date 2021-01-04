@@ -5,10 +5,9 @@
 #include "Actors/Projectile.h"
 #include <Engine/World.h>
 
-void AProjectileGun::Fire()
+void AProjectileGun::OnFireHandle(AActor* MyOwner)
 {
-	AActor* MyOwner = GetOwner();
-	if (MyOwner && ProjectileClass)
+	if (ProjectileClass)
 	{
 		FVector EyeLocation;
 		FRotator EyeRotation;
@@ -21,6 +20,4 @@ void AProjectileGun::Fire()
 		
 		GetWorld()->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, EyeRotation)->SetMyOwner(this);
 	}
-
-	RunCameraShake();
 }

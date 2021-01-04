@@ -35,7 +35,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 {
 	TArray<AActor*> IgnoredActors;
 	TSubclassOf<UDamageType> DamageType;
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MyOwner->GetImpactEffect(), GetActorLocation());
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MyOwner->GetDefaultImpactEffect(), GetActorLocation());
 	UGameplayStatics::ApplyRadialDamage(GetWorld(), MyOwner->GetDamage(), Hit.ImpactPoint, MyOwner->GetDamageRadius(), DamageType, IgnoredActors, this);
 	Destroy();
 }

@@ -14,7 +14,7 @@ class COOPSHOOTER_API AProjectileGun : public AWeapon
 	GENERATED_BODY()
 	
 public:
-	virtual void Fire() override;
+	virtual void OnFireHandle(AActor* MyOwner) override;
 	
 	float GetDamageRadius() const { return DamageRadius; }
 
