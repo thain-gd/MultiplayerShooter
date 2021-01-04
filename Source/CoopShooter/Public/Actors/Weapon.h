@@ -19,7 +19,7 @@ public:
 	virtual void Fire();
 
 	const TSubclassOf<UDamageType> GetDamageType() const { return DamageType; }
-	UParticleSystem* GetImpactEffect() const { return ImpactEffect; }
+	UParticleSystem* GetImpactEffect() const { return DefaultImpactEffect; }
 	float GetDamage() const { return Damage; }
 
 protected:
@@ -46,7 +46,10 @@ protected:
 	UParticleSystem* MuzzleEffect;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	UParticleSystem* ImpactEffect;
+	UParticleSystem* DefaultImpactEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	UParticleSystem* FleshImpactEffect;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	UParticleSystem* TracerEffect;
