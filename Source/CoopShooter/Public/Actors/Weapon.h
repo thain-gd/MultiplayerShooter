@@ -20,7 +20,7 @@ public:
 
 	const TSubclassOf<UDamageType> GetDamageType() const { return DamageType; }
 	UParticleSystem* GetImpactEffect() const { return DefaultImpactEffect; }
-	float GetDamage() const { return Damage; }
+	float GetDamage() const { return BaseDamage; }
 
 protected:
 	void RunCameraShake();
@@ -55,7 +55,10 @@ protected:
 	UParticleSystem* TracerEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
-	float Damage;
+	float BaseDamage;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	float HeadshotMultiplier = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<UCameraShake> FireCamShake;
