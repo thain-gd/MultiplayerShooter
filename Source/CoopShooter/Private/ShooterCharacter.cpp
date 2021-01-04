@@ -4,6 +4,8 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "Actors/Weapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "../CoopShooter.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -22,6 +24,8 @@ AShooterCharacter::AShooterCharacter()
 		DefaultMovingSpeed = CharacterMovementComp->MaxWalkSpeed;
 		AimingMovingSpeed = DefaultMovingSpeed * 0.35f;
 	}
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
