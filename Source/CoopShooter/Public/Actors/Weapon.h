@@ -22,6 +22,9 @@ public:
 	UParticleSystem* GetImpactEffect() const { return ImpactEffect; }
 	float GetDamage() const { return Damage; }
 
+protected:
+	void RunCameraShake();
+
 private:
 	void PlayFireEffects(FVector TraceEnd);
 
@@ -50,4 +53,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	float Damage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<UCameraShake> FireCamShake;
 };

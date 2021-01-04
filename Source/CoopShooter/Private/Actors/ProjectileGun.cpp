@@ -21,4 +21,6 @@ void AProjectileGun::Fire()
 		
 		GetWorld()->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, EyeRotation)->SetMyOwner(this);
 	}
+
+	RunCameraShake();
 }
