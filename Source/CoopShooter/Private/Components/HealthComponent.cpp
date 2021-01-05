@@ -22,5 +22,6 @@ void UHealthComponent::HandleTakeAnyDamage(AActor* OnTakeAnyDamage, float Damage
 		return;
 
 	CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.0f, MaxHealth);
+	OnHealthChanged.Broadcast(this, CurrentHealth, Damage, DamageType, InstigatedBy, DamageCauser);
 }
 

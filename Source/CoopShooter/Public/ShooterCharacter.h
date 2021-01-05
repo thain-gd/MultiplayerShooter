@@ -28,6 +28,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UFUNCTION()
+	void OnHealthChanged(class UHealthComponent* HealthComponent, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
 	void SetupWeapons();
 
 	void UpdateCameraFOV(float DeltaTime);
@@ -52,6 +55,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class USpringArmComponent* SpringArmComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	class UHealthComponent* HealthComp;
+
 	UPROPERTY(VisibleDefaultsOnly, Category = "Weapon")
 	FName WeaponAttachSocketName;
 
@@ -69,6 +75,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
 	float AimInterpSpeed;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+	bool bIsDied;
+
+private:
 	bool bIsAiming;
 	float DefaultFOV;
 

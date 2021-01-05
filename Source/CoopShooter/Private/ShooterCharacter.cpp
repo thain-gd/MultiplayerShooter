@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "../CoopShooter.h"
+#include "Components/HealthComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -30,6 +31,8 @@ AShooterCharacter::AShooterCharacter()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
 
+	HealthComp = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComp"));
+
 	AimingFOV = 65.0f;
 	AimInterpSpeed = 20.0f;
 }
@@ -42,7 +45,24 @@ void AShooterCharacter::BeginPlay()
 	DefaultFOV = CameraComp->FieldOfView;
 	WeaponAttachSocketName = TEXT("weapon_socket");
 
+	HealthComp->OnHealthChanged.AddDynamic(this, &AShooterCharacter::OnHealthChanged);
+
 	SetupWeapons();
+}
+
+void AShooterCharacter::OnHealthChanged(UHealthComponent* HealthComponent, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
+{
+	if (Health <= 0.0f && !bIsDied)
+	{
+		bIsDied = true;
+
+		GetMovementComponent()->StopMovementImmediately();
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		DetachFromControllerPendingDestroy();
+
+		SetLifeSpan(10.0f);
+	}
 }
 
 void AShooterCharacter::SetupWeapons()
