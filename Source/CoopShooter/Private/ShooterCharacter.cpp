@@ -37,6 +37,8 @@ AShooterCharacter::AShooterCharacter()
 	AimingFOV = 65.0f;
 	AimInterpSpeed = 20.0f;
 
+	DestroyDelayTime = 10.0f;
+
 	WeaponAttachSocketName = TEXT("weapon_socket");
 }
 
@@ -86,7 +88,9 @@ void AShooterCharacter::OnHealthChanged(UHealthComponent* HealthComponent, float
 
 		DetachFromControllerPendingDestroy();
 
-		SetLifeSpan(10.0f);
+		SetLifeSpan(DestroyDelayTime);
+		for (AWeapon* Weapon : AvailableWeapons)
+			Weapon->SetLifeSpan(DestroyDelayTime);
 	}
 }
 

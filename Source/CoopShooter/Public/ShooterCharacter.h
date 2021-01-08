@@ -79,11 +79,13 @@ protected:
 	bool bIsDied;
 
 private:
+	class UCharacterMovementComponent* CharacterMovementComp;
+
 	bool bIsAiming;
 	float DefaultFOV;
 
 	float DefaultMovingSpeed;
 	float AimingMovingSpeed;
 
-	class UCharacterMovementComponent* CharacterMovementComp;
+	float DestroyDelayTime;
 };
