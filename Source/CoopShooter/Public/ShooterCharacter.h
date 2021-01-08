@@ -64,7 +64,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TArray<TSubclassOf<AWeapon>> WeaponClasses;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<AWeapon*> AvailableWeapons;
 
 	int32 CurrentWeaponIndex = 0;

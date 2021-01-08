@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "../CoopShooter.h"
 #include "Components/HealthComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -35,6 +36,8 @@ AShooterCharacter::AShooterCharacter()
 
 	AimingFOV = 65.0f;
 	AimInterpSpeed = 20.0f;
+
+	WeaponAttachSocketName = TEXT("weapon_socket");
 }
 
 // Called when the game starts or when spawned
@@ -43,26 +46,10 @@ void AShooterCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	DefaultFOV = CameraComp->FieldOfView;
-	WeaponAttachSocketName = TEXT("weapon_socket");
-
 	HealthComp->OnHealthChanged.AddDynamic(this, &AShooterCharacter::OnHealthChanged);
 
-	SetupWeapons();
-}
-
-void AShooterCharacter::OnHealthChanged(UHealthComponent* HealthComponent, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
-{
-	if (Health <= 0.0f && !bIsDied)
-	{
-		bIsDied = true;
-
-		GetMovementComponent()->StopMovementImmediately();
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-		DetachFromControllerPendingDestroy();
-
-		SetLifeSpan(10.0f);
-	}
+	if (GetLocalRole() == ROLE_Authority)
+		SetupWeapons();
 }
 
 void AShooterCharacter::SetupWeapons()
@@ -85,6 +72,21 @@ void AShooterCharacter::SetupWeapons()
 		}
 
 		++i;
+	}
+}
+
+void AShooterCharacter::OnHealthChanged(UHealthComponent* HealthComponent, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
+{
+	if (Health <= 0.0f && !bIsDied)
+	{
+		bIsDied = true;
+
+		GetMovementComponent()->StopMovementImmediately();
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		DetachFromControllerPendingDestroy();
+
+		SetLifeSpan(10.0f);
 	}
 }
 
@@ -200,4 +202,11 @@ FVector AShooterCharacter::GetPawnViewLocation() const
 	}
 
 	return Super::GetPawnViewLocation();
+}
+
+void AShooterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AShooterCharacter, AvailableWeapons);
 }

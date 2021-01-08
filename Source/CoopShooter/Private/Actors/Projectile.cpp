@@ -28,6 +28,9 @@ AProjectile::AProjectile()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 
 	InitialLifeSpan = 3.0f;
+
+	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 
@@ -35,7 +38,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 {
 	TArray<AActor*> IgnoredActors;
 	TSubclassOf<UDamageType> DamageType;
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MyOwner->GetDefaultImpactEffect(), GetActorLocation());
-	UGameplayStatics::ApplyRadialDamage(GetWorld(), MyOwner->GetDamage(), Hit.ImpactPoint, MyOwner->GetDamageRadius(), DamageType, IgnoredActors, this);
+	//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MyOwner->GetDefaultImpactEffect(), GetActorLocation());
+	//UGameplayStatics::ApplyRadialDamage(GetWorld(), MyOwner->GetDamage(), Hit.ImpactPoint, MyOwner->GetDamageRadius(), DamageType, IgnoredActors, this);
 	Destroy();
 }

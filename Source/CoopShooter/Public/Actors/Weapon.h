@@ -7,6 +7,19 @@
 class UDamageType;
 class UParticleSystem;
 
+// Contains information of a single hitscan weapon line trace
+USTRUCT()
+struct FHitScanTrace
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TEnumAsByte<EPhysicalSurface> SurfaceType;
+
+	UPROPERTY()
+	FVector_NetQuantize TraceTo;
+};
+
 UCLASS()
 class COOPSHOOTER_API AWeapon : public AActor
 {
@@ -28,8 +41,17 @@ protected:
 
 private:
 	void Fire();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerFire();
+
 	virtual void OnFireHandle(AActor* MyOwner);
-	void PlayFireEffects();
+
+	void PlayImpactEffect(EPhysicalSurface SurfaceType, FVector ImpactPoint);
+	void PlayFireEffects(FVector TraceEndPoint);
+
+	UFUNCTION()
+	void OnRep_HitScanTrace();
 
 
 protected:
@@ -72,7 +94,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<UCameraShake> FireCamShake;
 
-	FVector TraceEndPoint;
+	UPROPERTY(ReplicatedUsing=OnRep_HitScanTrace)
+	FHitScanTrace HitScanTrace;
+
 	FTimerHandle TimeBetweenShotsTimerHandle;
 	float LastTimeFire;
 };
