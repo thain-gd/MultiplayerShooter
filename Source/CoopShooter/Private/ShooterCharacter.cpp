@@ -82,6 +82,8 @@ void AShooterCharacter::OnHealthChanged(UHealthComponent* HealthComponent, float
 	if (Health <= 0.0f && !bIsDied)
 	{
 		bIsDied = true;
+		
+		StopFire();
 
 		GetMovementComponent()->StopMovementImmediately();
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
