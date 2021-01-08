@@ -37,6 +37,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HealthComponent")
 	float MaxHealth;
 
-	UPROPERTY(BlueprintReadOnly, Category = "HealthComponent")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "HealthComponent")
 	float CurrentHealth;
 };

@@ -75,7 +75,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
 	float AimInterpSpeed;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Gameplay")
 	bool bIsDied;
 
 private:

@@ -213,4 +213,5 @@ void AShooterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AShooterCharacter, AvailableWeapons);
+	DOREPLIFETIME(AShooterCharacter, bIsDied);
 }
