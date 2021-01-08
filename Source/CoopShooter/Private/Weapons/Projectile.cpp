@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Actors/Projectile.h"
+#include "Weapons/Projectile.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Actors/Weapon.h"
+#include "Weapons/Weapon.h"
 #include "Kismet/GameplayStatics.h"
-#include "Actors/ProjectileGun.h"
+#include "Weapons/ProjectileGun.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values

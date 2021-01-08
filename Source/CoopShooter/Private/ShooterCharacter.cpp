@@ -2,7 +2,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
-#include "Actors/Weapon.h"
+#include "Weapons/Weapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "../CoopShooter.h"
@@ -24,7 +24,7 @@ AShooterCharacter::AShooterCharacter()
 	{
 		CharacterMovementComp->GetNavAgentPropertiesRef().bCanCrouch = true;
 		DefaultMovingSpeed = CharacterMovementComp->MaxWalkSpeed;
-		AimingMovingSpeed = DefaultMovingSpeed * 0.35f;
+		AimingMovingSpeed = FMath::Min(DefaultMovingSpeed * 0.45f, CharacterMovementComp->MaxWalkSpeedCrouched);
 	}
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);

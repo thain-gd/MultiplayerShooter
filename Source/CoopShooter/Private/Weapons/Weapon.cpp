@@ -1,4 +1,4 @@
-#include "Actors/Weapon.h"
+#include "Weapons/Weapon.h"
 #include <Kismet/GameplayStatics.h>
 #include <Components/SceneComponent.h>
 #include <Particles/ParticleSystemComponent.h>

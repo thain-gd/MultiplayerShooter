@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Actors/ProjectileGun.h"
-#include "Actors/Projectile.h"
+#include "Weapons/ProjectileGun.h"
+#include "Weapons/Projectile.h"
 #include <Engine/World.h>
 
 void AProjectileGun::OnFireHandle(AActor* MyOwner)
