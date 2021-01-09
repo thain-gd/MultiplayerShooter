@@ -15,6 +15,8 @@
 #include "ShooterCharacter.h"
 #include "Sound/SoundCue.h"
 
+#define I_AM_AUTHORITY GetLocalRole() == ROLE_Authority
+
 // Sets default values
 ATrackerBot::ATrackerBot()
 {
@@ -54,7 +56,8 @@ void ATrackerBot::BeginPlay()
 	
 	HealthComp->OnHealthChanged.AddDynamic(this, &ATrackerBot::HandleTakeDamage);
 	
-	NextPathPoint = GetNextPathPoint();
+	if (I_AM_AUTHORITY)
+		NextPathPoint = GetNextPathPoint();
 }
 
 void ATrackerBot::HandleTakeDamage(UHealthComponent* HealthComponent, float Health, float HealthDelta, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
@@ -78,13 +81,19 @@ void ATrackerBot::SelfDestruct()
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
 	
-	TArray<AActor*> IgnoredActors;
-	IgnoredActors.Add(this);
-	UGameplayStatics::ApplyRadialDamage(this, ExplosionDamage, GetActorLocation(), ExplosionRadius, nullptr, IgnoredActors, this, GetInstigatorController(), true);
-
 	UGameplayStatics::PlaySoundAtLocation(this, ExplodeSound, GetActorLocation());
 
-	Destroy();
+	MeshComp->SetVisibility(false, true);
+	MeshComp->SetSimulatePhysics(false);
+
+	if (I_AM_AUTHORITY)
+	{
+		TArray<AActor*> IgnoredActors;
+		IgnoredActors.Add(this);
+		UGameplayStatics::ApplyRadialDamage(this, ExplosionDamage, GetActorLocation(), ExplosionRadius, nullptr, IgnoredActors, this, GetInstigatorController(), true);
+
+		SetLifeSpan(2.0f);
+	}
 }
 
 FVector ATrackerBot::GetNextPathPoint()
@@ -101,6 +110,9 @@ FVector ATrackerBot::GetNextPathPoint()
 void ATrackerBot::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (GetLocalRole() != ROLE_Authority || bExploded)
+		return;
 
 	float DistanceToTarget = (GetActorLocation() - NextPathPoint).Size();
 	if (DistanceToTarget <= RequiredDistanceToTarget)
@@ -125,7 +137,8 @@ void ATrackerBot::NotifyActorBeginOverlap(AActor* OtherActor)
 	AShooterCharacter* PlayerPawn = Cast<AShooterCharacter>(OtherActor);
 	if (PlayerPawn)
 	{
-		GetWorldTimerManager().SetTimer(SelfDamageTimerHandle, this, &ATrackerBot::DamageSelf, SelfDamageInterval, true, 0.0f);
+		if (I_AM_AUTHORITY)
+			GetWorldTimerManager().SetTimer(SelfDamageTimerHandle, this, &ATrackerBot::DamageSelf, SelfDamageInterval, true, 0.0f);
 
 		bStartedSelfDestruction = true;
 

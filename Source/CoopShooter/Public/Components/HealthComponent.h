@@ -28,6 +28,8 @@ private:
 	UFUNCTION()
 	void HandleTakeAnyDamage(AActor* OnTakeAnyDamage, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
+	UFUNCTION()
+	void OnRep_CurrentHealth(float PreviousHealth);
 	
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
@@ -37,6 +39,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HealthComponent")
 	float MaxHealth;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "HealthComponent")
+	UPROPERTY(ReplicatedUsing=OnRep_CurrentHealth, BlueprintReadOnly, Category = "HealthComponent")
 	float CurrentHealth;
 };
