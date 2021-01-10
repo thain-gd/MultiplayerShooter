@@ -131,6 +131,8 @@ void ATrackerBot::Tick(float DeltaTime)
 
 void ATrackerBot::NotifyActorBeginOverlap(AActor* OtherActor)
 {
+	Super::NotifyActorBeginOverlap(OtherActor);
+
 	if (bStartedSelfDestruction)
 		return;
 
