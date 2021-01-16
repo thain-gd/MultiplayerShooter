@@ -7,6 +7,7 @@
 #include "Projectile.generated.h"
 
 class AProjectileGun;
+class UParticleSystem;
 
 UCLASS()
 class COOPSHOOTER_API AProjectile : public AActor
@@ -20,8 +21,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	void SetMyOwner(AProjectileGun* _MyOwner) { MyOwner = _MyOwner; }
-
+	void Initialize(float _Damage, float _DamageRadius);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -33,5 +33,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	class UProjectileMovementComponent* ProjectileMovement;
 
-	AProjectileGun* MyOwner;
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	UParticleSystem* ImpactEffect;
+
+	float Damage;
+	float DamageRadius;
 };

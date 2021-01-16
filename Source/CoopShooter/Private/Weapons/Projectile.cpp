@@ -33,12 +33,21 @@ AProjectile::AProjectile()
 	SetReplicateMovement(true);
 }
 
+void AProjectile::Initialize(float _Damage, float _DamageRadius)
+{
+	Damage = _Damage;
+	DamageRadius = _DamageRadius;
+}
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	TArray<AActor*> IgnoredActors;
-	TSubclassOf<UDamageType> DamageType;
-	//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MyOwner->GetDefaultImpactEffect(), GetActorLocation());
-	//UGameplayStatics::ApplyRadialDamage(GetWorld(), MyOwner->GetDamage(), Hit.ImpactPoint, MyOwner->GetDamageRadius(), DamageType, IgnoredActors, this);
-	Destroy();
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, Hit.ImpactPoint);
+
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		TArray<AActor*> IgnoredActors;
+		TSubclassOf<UDamageType> DamageType;
+		UGameplayStatics::ApplyRadialDamage(GetWorld(), Damage, Hit.ImpactPoint, DamageRadius, DamageType, IgnoredActors, this);
+		Destroy();
+	}
 }

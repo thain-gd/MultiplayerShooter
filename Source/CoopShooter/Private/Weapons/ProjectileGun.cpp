@@ -18,6 +18,12 @@ void AProjectileGun::OnFireHandle(AActor* MyOwner)
 		FActorSpawnParameters ActorSpawnParams;
 		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 		
-		GetWorld()->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, EyeRotation)->SetMyOwner(this);
+		if (GetLocalRole() == ROLE_Authority)
+		{
+			auto projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, EyeRotation);
+			projectile->Initialize(BaseDamage, DamageRadius);
+		}
+		
+		LastTimeFire = GetWorld()->TimeSeconds;
 	}
 }
