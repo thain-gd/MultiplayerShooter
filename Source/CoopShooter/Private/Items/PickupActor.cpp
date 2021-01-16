@@ -16,6 +16,8 @@ APickupActor::APickupActor()
 	DecalComp->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f));
 	DecalComp->DecalSize = FVector(64.0f, SphereComp->GetScaledSphereRadius(), SphereComp->GetScaledSphereRadius());
 	DecalComp->SetupAttachment(RootComponent);
+
+	CooldownDuration = 10.0f;
 }
 
 // Called when the game starts or when spawned

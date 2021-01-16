@@ -18,6 +18,9 @@ public:
 	// Sets default values for this component's properties
 	UHealthComponent();
 
+	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
+	void Heal(float HealAmount);
+
 	float GetCurrentHealth() const { return CurrentHealth; }
 
 protected:

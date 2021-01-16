@@ -8,6 +8,18 @@ UHealthComponent::UHealthComponent()
 	SetIsReplicated(true);
 }
 
+void UHealthComponent::Heal(float HealAmount)
+{
+	if (HealAmount <= 0.0f || CurrentHealth <= 0.0f)
+		return;
+
+	CurrentHealth = FMath::Min(CurrentHealth + HealAmount, MaxHealth);
+
+	UE_LOG(LogTemp, Warning, TEXT("Health Changed: %s (+%s)"), *FString::SanitizeFloat(CurrentHealth), *FString::SanitizeFloat(HealAmount));
+
+	OnHealthChanged.Broadcast(this, CurrentHealth, -HealAmount, nullptr, nullptr, nullptr);
+}
+
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();

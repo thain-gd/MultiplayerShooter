@@ -4,6 +4,7 @@
 APowerupActor::APowerupActor()
 {
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RootComponent = MeshComp;
 
 	PowerupInterval = 0.0f;
