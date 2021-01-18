@@ -23,6 +23,8 @@ void AProjectileGun::OnFireHandle(AActor* MyOwner)
 			auto projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, EyeRotation);
 			projectile->Initialize(BaseDamage, DamageRadius);
 		}
+
+		PlayFireEffects(FVector::ZeroVector);
 		
 		LastTimeFire = GetWorld()->TimeSeconds;
 	}

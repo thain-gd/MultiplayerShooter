@@ -37,6 +37,7 @@ public:
 	float GetDamage() const { return BaseDamage; }
 
 protected:
+	void PlayFireEffects(FVector TraceEndPoint);
 	void RunCameraShake();
 
 private:
@@ -48,7 +49,6 @@ private:
 	virtual void OnFireHandle(AActor* MyOwner);
 
 	void PlayImpactEffect(EPhysicalSurface SurfaceType, FVector ImpactPoint);
-	void PlayFireEffects(FVector TraceEndPoint);
 
 	UFUNCTION()
 	void OnRep_HitScanTrace();
