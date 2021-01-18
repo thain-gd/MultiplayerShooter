@@ -1,32 +1,34 @@
 #include "Items/PowerupActor.h"
+#include "Components/PointLightComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 APowerupActor::APowerupActor()
 {
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
-	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	RootComponent = MeshComp;
-
 	PowerupInterval = 0.0f;
 	TotalNumberOfTicks = 0;
+
+	bIsPowerupActive = false;
+
+	SetReplicates(true);
 }
 
-// Called when the game starts or when spawned
-void APowerupActor::BeginPlay()
+void APowerupActor::ActivatePowerup(AActor* ActiveFor)
 {
-	Super::BeginPlay();
-	
-	
-}
+	OnActivated(ActiveFor);
 
-void APowerupActor::ActivatePowerup()
-{
-	OnActivated();
+	bIsPowerupActive = true;
+	OnRep_PowerupActive();
 
 	if (PowerupInterval > 0.0f)
 		GetWorldTimerManager().SetTimer(PowerupTickTimerHandle, this, &APowerupActor::OnTickPowerup, PowerupInterval, true);
 	else
 		OnTickPowerup();
+}
+
+void APowerupActor::OnRep_PowerupActive()
+{
+	OnPowerupStateChanged(bIsPowerupActive);
 }
 
 void APowerupActor::OnTickPowerup()
@@ -41,6 +43,11 @@ void APowerupActor::OnTickPowerup()
 
 		GetWorldTimerManager().ClearTimer(PowerupTickTimerHandle);
 	}
-
 }
 
+void APowerupActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APowerupActor, bIsPowerupActive);
+}

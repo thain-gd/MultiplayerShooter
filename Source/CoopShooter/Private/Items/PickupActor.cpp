@@ -17,7 +17,9 @@ APickupActor::APickupActor()
 	DecalComp->DecalSize = FVector(64.0f, SphereComp->GetScaledSphereRadius(), SphereComp->GetScaledSphereRadius());
 	DecalComp->SetupAttachment(RootComponent);
 
-	CooldownDuration = 10.0f;
+	CooldownDuration = 10.0f;  
+	 
+	 SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -25,20 +27,8 @@ void APickupActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SpawnPowerup();
-}
-
-void APickupActor::NotifyActorBeginOverlap(AActor* OtherActor)
-{
-	Super::NotifyActorBeginOverlap(OtherActor);
-
-	if (PowerupInstance)
-	{
-		PowerupInstance->ActivatePowerup();
-		PowerupInstance = nullptr;
-
-		GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &APickupActor::SpawnPowerup, CooldownDuration);
-	}
+	if (GetLocalRole() == ROLE_Authority)
+		SpawnPowerup();
 }
 
 void APickupActor::SpawnPowerup()
@@ -54,4 +44,18 @@ void APickupActor::SpawnPowerup()
 
 	PowerupInstance = GetWorld()->SpawnActor<APowerupActor>(PowerupClass, GetTransform(), SpawnParams);
 	PowerupInstance->SetActorLocation(PowerupInstance->GetActorLocation() + FVector(0.0f, 0.0f, 50.0f));
+}
+
+
+void APickupActor::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	if (GetLocalRole() == ROLE_Authority && PowerupInstance)
+	{
+		PowerupInstance->ActivatePowerup(OtherActor);
+		PowerupInstance = nullptr;
+
+		GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &APickupActor::SpawnPowerup, CooldownDuration);
+	}
 }

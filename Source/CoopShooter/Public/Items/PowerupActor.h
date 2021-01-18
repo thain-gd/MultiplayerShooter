@@ -15,10 +15,10 @@ public:
 	// Sets default values for this actor's properties
 	APowerupActor();
 
-	void ActivatePowerup();
+	void ActivatePowerup(AActor* ActiveFor);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
-	void OnActivated();
+	void OnActivated(AActor* ActiveFor);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
 	void OnPowerupTicked();
@@ -26,18 +26,18 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
 	void OnExpired();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
+	void OnPowerupStateChanged(bool bNewIsActive);
 
 private:
 	UFUNCTION()
 	void OnTickPowerup();
 
-protected:
-	UPROPERTY(VisibleAnywhere, Category = "Powerups")
-	UStaticMeshComponent* MeshComp;
+	UFUNCTION()
+	void OnRep_PowerupActive();
 
+
+protected:
 	// Time between powerup ticks
 	UPROPERTY(EditDefaultsOnly, Category = "Powerups")
 	float PowerupInterval;
@@ -47,6 +47,9 @@ protected:
 	uint32 TotalNumberOfTicks;
 
 private:
+	UPROPERTY(ReplicatedUsing=OnRep_PowerupActive)
+	bool bIsPowerupActive;
+
 	FTimerHandle PowerupTickTimerHandle;
 
 	// Total number of ticks applied

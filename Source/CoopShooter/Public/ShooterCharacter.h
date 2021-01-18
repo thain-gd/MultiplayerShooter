@@ -27,6 +27,18 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	float GetCharacterMaxSpeed() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Event")
+	float ChangeMaxWalkSpeed(float NewSpeed);
+
+	UFUNCTION(Server, Reliable, WithValidation, Category = "Event")
+	void ServerChangeMaxWalkSpeed(float NewSpeed);
+
+	UFUNCTION(Client, Reliable, WithValidation, BlueprintCallable, Category = "Event")
+	void ClientChangeMaxWalkSpeed(float NewSpeed);
+
 private:
 	UFUNCTION()
 	void OnHealthChanged(class UHealthComponent* HealthComponent, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
@@ -79,8 +91,6 @@ protected:
 	bool bIsDied;
 
 private:
-	class UCharacterMovementComponent* CharacterMovementComp;
-
 	bool bIsAiming;
 	float DefaultFOV;
 

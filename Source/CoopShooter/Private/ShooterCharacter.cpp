@@ -18,14 +18,10 @@ AShooterCharacter::AShooterCharacter()
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->SetupAttachment(RootComponent);
-
-	CharacterMovementComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
-	if (CharacterMovementComp)
-	{
-		CharacterMovementComp->GetNavAgentPropertiesRef().bCanCrouch = true;
-		DefaultMovingSpeed = CharacterMovementComp->MaxWalkSpeed;
-		AimingMovingSpeed = FMath::Min(DefaultMovingSpeed * 0.45f, CharacterMovementComp->MaxWalkSpeedCrouched);
-	}
+	
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+	DefaultMovingSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	AimingMovingSpeed = FMath::Min(DefaultMovingSpeed * 0.45f, GetCharacterMovement()->MaxWalkSpeedCrouched);
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
 
@@ -52,6 +48,11 @@ void AShooterCharacter::BeginPlay()
 
 	if (GetLocalRole() == ROLE_Authority)
 		SetupWeapons();
+}
+
+float AShooterCharacter::GetCharacterMaxSpeed() const
+{
+	return GetCharacterMovement()->GetMaxSpeed();
 }
 
 void AShooterCharacter::SetupWeapons()
@@ -172,15 +173,15 @@ void AShooterCharacter::StopFire()
 void AShooterCharacter::BeginAim()
 {
 	bIsAiming = true;
-	if (CharacterMovementComp)
-		CharacterMovementComp->MaxWalkSpeed = AimingMovingSpeed;
+	ChangeMaxWalkSpeed(AimingMovingSpeed);
+	ServerChangeMaxWalkSpeed(AimingMovingSpeed);
 }
 
 void AShooterCharacter::EndAim()
 {
 	bIsAiming = false;
-	if (CharacterMovementComp)
-		CharacterMovementComp->MaxWalkSpeed = DefaultMovingSpeed;
+	ChangeMaxWalkSpeed(DefaultMovingSpeed);
+	ServerChangeMaxWalkSpeed(DefaultMovingSpeed);
 }
 
 void AShooterCharacter::SwitchWeaponUp()
@@ -208,6 +209,32 @@ FVector AShooterCharacter::GetPawnViewLocation() const
 	}
 
 	return Super::GetPawnViewLocation();
+}
+
+void AShooterCharacter::ClientChangeMaxWalkSpeed_Implementation(float NewSpeed)
+{
+	ChangeMaxWalkSpeed(NewSpeed);
+}
+
+float AShooterCharacter::ChangeMaxWalkSpeed(float NewSpeed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+	return GetCharacterMovement()->MaxWalkSpeed;
+}
+
+bool AShooterCharacter::ClientChangeMaxWalkSpeed_Validate(float NewSpeed)
+{
+	return true;
+}
+
+void AShooterCharacter::ServerChangeMaxWalkSpeed_Implementation(float NewSpeed)
+{
+	ChangeMaxWalkSpeed(NewSpeed);
+}
+
+bool AShooterCharacter::ServerChangeMaxWalkSpeed_Validate(float NewSpeed)
+{
+	return true;
 }
 
 void AShooterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
