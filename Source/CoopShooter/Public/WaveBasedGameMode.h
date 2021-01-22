@@ -4,6 +4,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "WaveBasedGameMode.generated.h"
 
+enum class EWaveState : uint8;
+
 UCLASS()
 class COOPSHOOTER_API AWaveBasedGameMode : public AGameModeBase
 {
@@ -31,6 +33,8 @@ private:
 	void CheckAnyPlayerAlive();
 
 	void GameOver();
+
+	void SetWaveState(EWaveState NewState);
 
 	
 private:

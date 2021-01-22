@@ -1,4 +1,5 @@
 #include "WaveBasedGameMode.h"
+#include "WaveGameState.h"
 #include "EngineUtils.h"
 #include "Components/HealthComponent.h"
 
@@ -6,6 +7,8 @@ AWaveBasedGameMode::AWaveBasedGameMode()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.TickInterval = 1.0f;
+
+	GameStateClass = AWaveGameState::StaticClass();
 
 	TimeBetweenWaves = 2.0f;
 }
@@ -20,6 +23,8 @@ void AWaveBasedGameMode::StartPlay()
 void AWaveBasedGameMode::PrepareForNextWave()
 {
 	GetWorldTimerManager().SetTimer(NextWaveStartTimerHandle, this, &AWaveBasedGameMode::StartWave, TimeBetweenWaves, false);
+
+	SetWaveState(EWaveState::WaitingToStart);
 }
 
 void AWaveBasedGameMode::StartWave()
@@ -28,6 +33,8 @@ void AWaveBasedGameMode::StartWave()
 	RemainedBotsToSpawn = 2 * WaveCount;
 
 	GetWorldTimerManager().SetTimer(BotSpawnerTimerHandle, this, &AWaveBasedGameMode::SpawnBotTimerElapsed, 1.0f, true, 0.0f);
+
+	SetWaveState(EWaveState::WaveInProgress);
 }
 
 void AWaveBasedGameMode::SpawnBotTimerElapsed()
@@ -42,6 +49,8 @@ void AWaveBasedGameMode::SpawnBotTimerElapsed()
 void AWaveBasedGameMode::EndWave()
 {
 	GetWorldTimerManager().ClearTimer(BotSpawnerTimerHandle);
+
+	SetWaveState(EWaveState::WaitingToComplete);
 }
 
 void AWaveBasedGameMode::Tick(float DeltaSeconds)
@@ -74,7 +83,11 @@ void AWaveBasedGameMode::CheckWaveState()
 	}
 
 	if (!bIsAnyBotAlive)
+	{
+		SetWaveState(EWaveState::WaveComplete);
+
 		PrepareForNextWave();
+	}
 }
 
 void AWaveBasedGameMode::CheckAnyPlayerAlive()
@@ -101,5 +114,16 @@ void AWaveBasedGameMode::GameOver()
 {
 	EndWave();
 
+	SetWaveState(EWaveState::GameOver);
+
 	UE_LOG(LogTemp, Warning, TEXT("GAME OVER! Players Died"));
+}
+
+void AWaveBasedGameMode::SetWaveState(EWaveState NewState)
+{
+	AWaveGameState* GS = GetGameState<AWaveGameState>();
+	if (ensureAlways(GS))
+	{
+		GS->SetWaveState(NewState);
+	}
 }
