@@ -1,4 +1,5 @@
 #include "Components/HealthComponent.h"
+#include "WaveBasedGameMode.h"
 #include "Net/UnrealNetwork.h"
 
 UHealthComponent::UHealthComponent()
@@ -36,11 +37,18 @@ void UHealthComponent::BeginPlay()
 
 void UHealthComponent::HandleTakeAnyDamage(AActor* OnTakeAnyDamage, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
-	if (Damage <= 0.0f)
+	if (Damage <= 0.0f || !IsAlive())
 		return;
 
 	CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.0f, MaxHealth);
 	OnHealthChanged.Broadcast(this, CurrentHealth, Damage, DamageType, InstigatedBy, DamageCauser);
+
+	if (IsAlive())
+		return;
+
+	AWaveBasedGameMode* GM = GetWorld()->GetAuthGameMode<AWaveBasedGameMode>();
+	if (GM)
+		GM->OnActorKilled.Broadcast(GetOwner(), DamageCauser, InstigatedBy);
 }
 
 void UHealthComponent::OnRep_CurrentHealth(float PreviousHealth)

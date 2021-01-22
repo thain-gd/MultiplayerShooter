@@ -1,5 +1,6 @@
 #include "WaveBasedGameMode.h"
 #include "WaveGameState.h"
+#include "ShooterPlayerState.h"
 #include "EngineUtils.h"
 #include "Components/HealthComponent.h"
 
@@ -9,6 +10,7 @@ AWaveBasedGameMode::AWaveBasedGameMode()
 	PrimaryActorTick.TickInterval = 1.0f;
 
 	GameStateClass = AWaveGameState::StaticClass();
+	PlayerStateClass = AShooterPlayerState::StaticClass();
 
 	TimeBetweenWaves = 2.0f;
 }
