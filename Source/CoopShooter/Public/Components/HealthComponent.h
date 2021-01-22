@@ -21,7 +21,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "HealthComponent")
 	void Heal(float HealAmount);
 
-	float GetCurrentHealth() const { return CurrentHealth; }
+	bool IsAlive() const { return CurrentHealth > 0.0f; }
 
 protected:
 	// Called when the game starts

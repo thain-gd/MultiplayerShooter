@@ -49,6 +49,7 @@ void AWaveBasedGameMode::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	CheckWaveState();
+	CheckAnyPlayerAlive();
 }
 
 void AWaveBasedGameMode::CheckWaveState()
@@ -65,7 +66,7 @@ void AWaveBasedGameMode::CheckWaveState()
 			continue;
 
 		UHealthComponent* HealthComp = Cast<UHealthComponent>(TestPawn->GetComponentByClass(UHealthComponent::StaticClass()));
-		if (HealthComp && HealthComp->GetCurrentHealth() > 0.0f)
+		if (HealthComp && HealthComp->IsAlive())
 		{
 			bIsAnyBotAlive = true;
 			break;
@@ -74,4 +75,31 @@ void AWaveBasedGameMode::CheckWaveState()
 
 	if (!bIsAnyBotAlive)
 		PrepareForNextWave();
+}
+
+void AWaveBasedGameMode::CheckAnyPlayerAlive()
+{
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* PC = It->Get();
+		if (PC && PC->GetPawn())
+		{
+			APawn* MyPawn = PC->GetPawn();
+			UHealthComponent* HealthComp = Cast<UHealthComponent>(MyPawn->GetComponentByClass(UHealthComponent::StaticClass()));
+			if (ensureAlways(HealthComp) && HealthComp->IsAlive())
+			{
+				return;
+			}
+		}
+	}
+
+	// No player alive
+	GameOver();
+}
+
+void AWaveBasedGameMode::GameOver()
+{
+	EndWave();
+
+	UE_LOG(LogTemp, Warning, TEXT("GAME OVER! Players Died"));
 }

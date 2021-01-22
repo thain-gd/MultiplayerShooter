@@ -28,6 +28,9 @@ private:
 	void EndWave();
 
 	void CheckWaveState();
+	void CheckAnyPlayerAlive();
+
+	void GameOver();
 
 	
 private:
