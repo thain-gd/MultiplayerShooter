@@ -41,6 +41,8 @@ private:
 
 	void SetWaveState(EWaveState NewState);
 
+	void RestartDeadPlayers();
+
 	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "GameMode")
